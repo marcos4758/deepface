@@ -1,7 +1,7 @@
 # built-in dependencies
 import os
 import pickle
-from typing import List, Union, Optional, Dict, Any, Set
+from typing import List, Union, Optional, Dict, Any, Set, IO
 import time
 
 # 3rd party dependencies
@@ -18,7 +18,7 @@ logger = Logger()
 
 
 def find(
-    img_path: Union[str, np.ndarray],
+    img_path: Union[str, np.ndarray, IO[bytes]],
     db_path: str,
     model_name: str = "VGG-Face",
     distance_metric: str = "cosine",
@@ -184,9 +184,7 @@ def find(
     # Enforce data consistency amongst on disk images and pickle file
     if refresh_database:
         # embedded images
-        pickled_images = {
-            representation["identity"] for representation in representations
-        }
+        pickled_images = {representation["identity"] for representation in representations}
 
         new_images = storage_images - pickled_images  # images added to storage
         old_images = pickled_images - storage_images  # images removed from storage
@@ -569,7 +567,9 @@ def find_batched(
         "source_h": np.array([region["h"] for region in source_regions]),
     }
 
-    distances = verification.find_distance(embeddings, target_embeddings, distance_metric)  # (M, N)
+    distances = np.array(
+        verification.find_distance(embeddings, target_embeddings, distance_metric)
+    )  # (M, N)
     distances[:, ~valid_mask] = np.inf
 
     resp_obj = []

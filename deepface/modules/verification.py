@@ -1,6 +1,6 @@
 # built-in dependencies
 import time
-from typing import Any, Dict, Optional, Union, List, Tuple
+from typing import Any, Dict, Optional, Union, List, Tuple, IO
 
 # 3rd party dependencies
 import numpy as np
@@ -14,8 +14,8 @@ logger = Logger()
 
 
 def verify(
-    img1_path: Union[str, np.ndarray, List[float]],
-    img2_path: Union[str, np.ndarray, List[float]],
+    img1_path: Union[str, np.ndarray, IO[bytes], List[float]],
+    img2_path: Union[str, np.ndarray, IO[bytes], List[float]],
     model_name: str = "VGG-Face",
     detector_backend: str = "opencv",
     distance_metric: str = "cosine",
@@ -115,7 +115,7 @@ def verify(
     }
 
     def extract_embeddings_and_facial_areas(
-        img_path: Union[str, np.ndarray, List[float]], index: int
+        img_path: Union[str, np.ndarray, IO[bytes], List[float]], index: int
     ) -> Tuple[List[List[float]], List[dict]]:
         """
         Extracts facial embeddings and corresponding facial areas from an
@@ -213,7 +213,7 @@ def verify(
 
 
 def __extract_faces_and_embeddings(
-    img_path: Union[str, np.ndarray],
+    img_path: Union[str, np.ndarray, IO[bytes]],
     model_name: str = "VGG-Face",
     detector_backend: str = "opencv",
     enforce_detection: bool = True,

@@ -10,14 +10,14 @@ os.environ["TF_USE_LEGACY_KERAS"] = "1"
 # pylint: disable=wrong-import-position
 
 # 3rd party dependencies
-import numpy as np
-import pandas as pd
-import tensorflow as tf
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+import tensorflow as tf  # noqa: E402
 
 # package dependencies
-from deepface.commons import package_utils, folder_utils
-from deepface.commons.logger import Logger
-from deepface.modules import (
+from deepface.commons import package_utils, folder_utils  # noqa: E402
+from deepface.commons.logger import Logger  # noqa: E402
+from deepface.modules import (  # noqa: E402
     modeling,
     representation,
     verification,
@@ -27,7 +27,8 @@ from deepface.modules import (
     streaming,
     preprocessing,
 )
-from deepface import __version__
+
+# from deepface import __version__
 
 logger = Logger()
 
@@ -380,7 +381,9 @@ def represent(
     align: bool = True,
     expand_percentage: int = 0,
     normalization: str = "base",
-    anti_spoofing: bool = False,
+    color_face: str = "rgb",
+    normalize_face: bool = True,
+    anti_spoofing: str = "skip",
     max_faces: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
     """
@@ -412,7 +415,15 @@ def represent(
             Default is base. Options: base, raw, Facenet, Facenet2018, VGGFace, VGGFace2, ArcFace
             (default is base).
 
-        anti_spoofing (boolean): Flag to enable anti spoofing (default is False).
+        color_face (string): Color to return face image output. Options: 'rgb', 'bgr' or 'gray'
+            (default is 'rgb').
+
+        normalize_face (boolean): Flag to enable normalization (divide by 255) of the output
+            face image output face image normalization (default is True).
+
+        anti_spoofing (string): anti-spoofing analyze mode. Options: 'skip', 'run' or 'run_and_raise'.
+            If 'run', the model will analyze the input image for spoofing. If 'run_and_raise',
+            the model will also raise an exception if a spoof is detected (default is 'skip').
 
         max_faces (int): Set a limit on the number of faces to be processed (default is None).
 
@@ -420,17 +431,32 @@ def represent(
         results (List[Dict[str, Any]]): A list of dictionaries, each containing the
             following fields:
 
-        - embedding (List[float]): Multidimensional vector representing facial features.
+        - "embedding" (List[float]): Multidimensional vector representing facial features.
             The number of dimensions varies based on the reference model
             (e.g., FaceNet returns 128 dimensions, VGG-Face returns 4096 dimensions).
 
-        - facial_area (dict): Detected facial area by face detection in dictionary format.
-            Contains 'x' and 'y' as the left-corner point, and 'w' and 'h'
-            as the width and height. If `detector_backend` is set to 'skip', it represents
-            the full image area and is nonsensical.
+        - "face" (np.ndarray): The detected face as a NumPy array. The color of the face
+            is determined by the `color_face` parameter.
 
-        - face_confidence (float): Confidence score of face detection. If `detector_backend` is set
+        - "facial_area" (Dict[str, Any]): The detected face's regions as a dictionary containing:
+            - keys 'x', 'y', 'w', 'h' with int values
+            - keys 'left_eye', 'right_eye' with a tuple of 2 ints as values.
+                left eye and right eye are eyes on the left and right respectively with respect
+                to the person itself instead of observer.
+
+        - "face_confidence" (float): Confidence score of face detection. If `detector_backend` is set
             to 'skip', the confidence will be 0 and is nonsensical.
+
+        - "is_real" (boolean): antispoofing analyze result. this key is just available in the
+            result only if anti_spoofing is set to 'run' or 'run_and_raise' in input arguments.
+
+        - "antispoof_score" (float): score of antispoofing analyze result. this key is
+            just available in the result only if anti_spoofing is set to 'run' or 'run_and_raise'
+            in input arguments.
+
+        - "antispoof_prediction" (np.ndarray): prediction vector of antispoofing analyze result.
+            this key is just available in the result only if anti_spoofing is set to 'run' or
+            'run_and_raise' in input arguments.
     """
     return representation.represent(
         img_path=img_path,
@@ -440,6 +466,8 @@ def represent(
         align=align,
         expand_percentage=expand_percentage,
         normalization=normalization,
+        color_face=color_face,
+        normalize_face=normalize_face,
         anti_spoofing=anti_spoofing,
         max_faces=max_faces,
     )

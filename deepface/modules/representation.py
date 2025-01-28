@@ -1,5 +1,5 @@
 # built-in dependencies
-from typing import Any, Dict, List, Union, Optional
+from typing import Any, Dict, List, Union, Optional, IO
 
 # 3rd party dependencies
 import numpy as np
@@ -12,7 +12,7 @@ from deepface.models.FacialRecognition import FacialRecognition
 
 
 def represent(
-    img_path: Union[str, np.ndarray],
+    img_path: Union[str, np.ndarray, IO[bytes]],
     model_name: str = "VGG-Face",
     enforce_detection: bool = True,
     detector_backend: str = "opencv",
@@ -55,9 +55,9 @@ def represent(
         normalize_face (boolean): Flag to enable normalization (divide by 255) of the output
             face image output face image normalization (default is True).
 
-        anti_spoofing (string): 'skip', 'run' or 'run_and_raise'. If 'run', the model will
-            analyze the input image for spoofing. If 'run_and_raise', the model will also raise
-            an exception if a spoof is detected. Default is 'skip'.
+        anti_spoofing (string): anti-spoofing analyze mode. Options: 'skip', 'run' or 'run_and_raise'.
+            If 'run', the model will analyze the input image for spoofing. If 'run_and_raise',
+            the model will also raise an exception if a spoof is detected (default is 'skip').
 
         max_faces (int): Set a limit on the number of faces to be processed (default is None).
 
