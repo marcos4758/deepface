@@ -21,7 +21,7 @@ def represent(
     normalization: str = "base",
     color_face: str = "rgb",
     normalize_face: bool = True,
-    anti_spoofing: str = "skip",
+    anti_spoofing_mode: str = "skip",
     max_faces: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
     """
@@ -55,7 +55,7 @@ def represent(
         normalize_face (boolean): Flag to enable normalization (divide by 255) of the output
             face image output face image normalization (default is True).
 
-        anti_spoofing (string): anti-spoofing analyze mode. Options: 'skip', 'run' or 'run_and_raise'.
+        anti_spoofing_mode (string): anti-spoofing analyze mode. Options: 'skip', 'run' or 'run_and_raise'.
             If 'run', the model will analyze the input image for spoofing. If 'run_and_raise',
             the model will also raise an exception if a spoof is detected (default is 'skip').
 
@@ -112,7 +112,7 @@ def represent(
             grayscale=False,
             color_face="bgr",
             normalize_face=False,
-            anti_spoofing=True if "run" in anti_spoofing else False,
+            anti_spoofing=True if "run" in anti_spoofing_mode else False,
             max_faces=max_faces,
         )
     else:  # skip
@@ -152,7 +152,7 @@ def represent(
         antispoof_score = img_obj.get("antispoof_score", None)
         antispoof_prediction = img_obj.get("antispoof_prediction", None)
 
-        if anti_spoofing == "run_and_raise" and is_real is False:
+        if anti_spoofing_mode == "run_and_raise" and is_real is False:
             raise ValueError("Spoof detected in the given image.")
 
         face = img_obj["face"]
@@ -193,7 +193,7 @@ def represent(
             "face_confidence": face_confidence,
         }
 
-        if "run" in anti_spoofing:
+        if "run" in anti_spoofing_mode:
             output["is_real"] = is_real
             output["antispoof_score"] = antispoof_score
             output["antispoof_prediction"] = antispoof_prediction

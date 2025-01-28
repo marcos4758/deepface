@@ -383,7 +383,7 @@ def represent(
     normalization: str = "base",
     color_face: str = "rgb",
     normalize_face: bool = True,
-    anti_spoofing: str = "skip",
+    anti_spoofing_mode: str = "skip",
     max_faces: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
     """
@@ -421,7 +421,7 @@ def represent(
         normalize_face (boolean): Flag to enable normalization (divide by 255) of the output
             face image output face image normalization (default is True).
 
-        anti_spoofing (string): anti-spoofing analyze mode. Options: 'skip', 'run' or 'run_and_raise'.
+        anti_spoofing_mode (string): anti-spoofing analyze mode. Options: 'skip', 'run' or 'run_and_raise'.
             If 'run', the model will analyze the input image for spoofing. If 'run_and_raise',
             the model will also raise an exception if a spoof is detected (default is 'skip').
 
@@ -468,7 +468,7 @@ def represent(
         normalization=normalization,
         color_face=color_face,
         normalize_face=normalize_face,
-        anti_spoofing=anti_spoofing,
+        anti_spoofing_mode=anti_spoofing_mode,
         max_faces=max_faces,
     )
 
