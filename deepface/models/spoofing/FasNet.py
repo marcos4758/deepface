@@ -12,8 +12,9 @@ from deepface.commons.logger import Logger
 logger = Logger()
 
 # pylint: disable=line-too-long, too-few-public-methods, nested-min-max
-FIRST_WEIGHTS_URL="https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/raw/master/resources/anti_spoof_models/2.7_80x80_MiniFASNetV2.pth"
-SECOND_WEIGHTS_URL="https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/raw/master/resources/anti_spoof_models/4_0_0_80x80_MiniFASNetV1SE.pth"
+FIRST_WEIGHTS_URL = "https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/raw/master/resources/anti_spoof_models/2.7_80x80_MiniFASNetV2.pth"  # noqa: E501
+SECOND_WEIGHTS_URL = "https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/raw/master/resources/anti_spoof_models/4_0_0_80x80_MiniFASNetV1SE.pth"  # noqa: E501
+
 
 class Fasnet:
     """
@@ -132,12 +133,13 @@ class Fasnet:
         prediction = np.zeros((1, 3))
         prediction += first_result
         prediction += second_result
+        prediction /= 2
 
         label = np.argmax(prediction)
         is_real = True if label == 1 else False  # pylint: disable=simplifiable-if-expression
-        score = prediction[0][label] / 2
+        score = prediction[0][label]
 
-        return is_real, score
+        return is_real, score, prediction
 
 
 # subsdiary classes and functions

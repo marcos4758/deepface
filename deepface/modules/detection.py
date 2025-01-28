@@ -78,6 +78,9 @@ def extract_faces(
 
         - "antispoof_score" (float): score of antispoofing analyze result. this key is
             just available in the result only if anti_spoofing is set to True in input arguments.
+
+        - "antispoof_prediction" (np.ndarray): prediction vector of antispoofing analyze result.
+            this key is just available in the result only if anti_spoofing is set to True in input arguments.
     """
 
     resp_objs = []
@@ -174,13 +177,16 @@ def extract_faces(
 
         if anti_spoofing is True:
             antispoof_model = modeling.build_model(task="spoofing", model_name="Fasnet")
-            is_real, antispoof_score = antispoof_model.analyze(img=img, facial_area=(x, y, w, h))
+            is_real, antispoof_score, antispoof_prediction = antispoof_model.analyze(
+                img=img, facial_area=(x, y, w, h)
+            )
             resp_obj["is_real"] = is_real
             resp_obj["antispoof_score"] = antispoof_score
+            resp_obj["antispoof_prediction"] = antispoof_prediction
 
         resp_objs.append(resp_obj)
 
-    if len(resp_objs) == 0 and enforce_detection == True:
+    if len(resp_objs) == 0 and enforce_detection is True:
         raise ValueError(
             f"Exception while extracting faces from {img_name}."
             "Consider to set enforce_detection arg to False."
